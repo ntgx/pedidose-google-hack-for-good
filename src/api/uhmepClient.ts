@@ -50,6 +50,8 @@ export interface FhirServiceRequest {
     display?: string;
   }>;
   reasonCode?: Array<{ text: string; coding?: FhirCoding[] }>;
+  quantityQuantity?: { value: number; unit?: string };
+  occurrencePeriod?: { start?: string; end?: string };
   note?: Array<{ text: string; authorString?: string; time?: string }>;
   patientInstruction?: string;
   extension?: FhirExtension[];

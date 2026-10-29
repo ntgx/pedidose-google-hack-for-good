@@ -148,7 +148,7 @@ For resources like `Practitioner`, `PractitionerRole`, and `Organization`:
   * **Professional (11 digits)**: Identifies healthcare professionals (e.g., `19766016004` for physicians, `20017534001` for pharmacists).
   * **Organization (8 digits)**: Identifies healthcare facilities (e.g., `71000123` for hospitals, `56009876` for pharmacies).
 * **CBE / KBO (10 digits)**: Belgian Enterprise Number for businesses and institutions (e.g., `0419052272`).
-* **AMPP & CNK Codes**: Belgian national drug codes identifying specific packaged medicines (e.g., `0042895` for Amoxicilline 1000mg 24 comp).
+* **AMPP & CNK Codes**: Belgian national drug codes identifying specific packaged medicines (e.g., `0345678` for Omeprazol Sandoz 20mg 28 caps).
 
 ### 5. Pseudonymization
 To protect patient privacy, real patient SSINs are never stored in plain text in the prescription hub. Instead, they are pseudonymized into deterministic tokens with the prefix:
@@ -197,11 +197,13 @@ The server comes pre-populated with realistic Belgian healthcare test data:
 ### Sample Patients & Prescriptions
 | Prescription ID | Patient Pseudonym | Medication | Status |
 | :--- | :--- | :--- | :--- |
-| `sr-amoxicilline-001` | `urn:be:fgov:ehealth:pseudo:v1:pat-1001-jane-doe` | Amoxicilline 1000mg 24 comp | `active` |
-| `sr-paracetamol-002` | `urn:be:fgov:ehealth:pseudo:v1:pat-1001-jane-doe` | Dafalgan Forte 1g 40 comp | `completed` |
-| `sr-ibuprofen-003` | `urn:be:fgov:ehealth:pseudo:v1:pat-1002-marc-willems` | Brufen 600mg 30 comp | `cancelled` |
-| `sr-atorvastatine-004` | `urn:be:fgov:ehealth:pseudo:v1:pat-1002-marc-willems` | Lipitor 20mg 84 comp | `stopped` (expired) |
+| `sr-ciclosporin-001` | `urn:be:fgov:ehealth:pseudo:v1:pat-1001-jane-doe` | Neoral 100 mg/ml oral solution 50 ml | `active` |
+| `sr-paracetamol-002` | `urn:be:fgov:ehealth:pseudo:v1:pat-1001-jane-doe` | Dafalgan Pediatrie 30 mg/ml 90 ml | `completed` |
+| `sr-ibuprofen-003` | `urn:be:fgov:ehealth:pseudo:v1:pat-1002-marc-willems` | Nurofen 20 mg/ml suspension 100 ml | `cancelled` |
+| `sr-dexamethasone-004` | `urn:be:fgov:ehealth:pseudo:v1:pat-1002-marc-willems` | Dexamethason 1 mg/ml oral solution | `stopped` (course completed) |
 | `sr-omeprazole-005` | `urn:be:fgov:ehealth:pseudo:v1:pat-1003-elena-vandenberg` | Omeprazol 20mg 28 caps | `active` |
+| `sr-mercaptopurine-006` | `urn:be:fgov:ehealth:pseudo:v1:pat-1001-jane-doe` | !PURI Mercaptopurine 10 mg/ml (magistral) | `draft` |
+| `sr-atovaquone-007` | `urn:be:fgov:ehealth:pseudo:v1:pat-1003-elena-vandenberg` | Wellvone 750 mg/5 ml suspension | `active` |
 
 ---
 
@@ -240,7 +242,7 @@ curl -X POST "http://localhost:8000/ServiceRequest/_search?patient=pat-1001-jane
 The `$graph` operation returns the prescription bundled together with the requesting doctor, clinic organization, and associated fulfillment task:
 
 ```bash
-curl -X GET http://localhost:8000/ServiceRequest/sr-amoxicilline-001/\$graph
+curl -X GET http://localhost:8000/ServiceRequest/sr-ciclosporin-001/\$graph
 ```
 
 ### 4. Create a New Prescription

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Calculator, Droplets, Ruler, Scale } from 'lucide-react';
 import { PediatricPatient } from '../data/pediatricPatients';
 import { FormularyMedication } from '../data/clinicalFormulary';
-import { PatientSafetyFacts } from './PatientPanel';
+import { MedicationList, PatientSafetyFacts } from './PatientPanel';
 
 type VitalsUpdate = Partial<Pick<PediatricPatient, 'weightKg' | 'heightCm' | 'ageYears' | 'crClMlMin'>>;
 
@@ -14,6 +14,7 @@ interface DosingBasisPanelProps {
 }
 
 type Role = 'driver' | 'feeds' | 'check' | 'none';
+type AboutTab = 'profile' | 'current' | 'past';
 
 const kidneyStatus = (crCl: number) =>
   crCl < 10
@@ -96,6 +97,14 @@ export const DosingBasisPanel: React.FC<DosingBasisPanelProps> = ({
   const renalWarn = renalChecked && patient.crClMlMin <= 50;
   const kidney = kidneyStatus(patient.crClMlMin);
   const firstName = patient.shortName.split(' ')[0];
+  const [tab, setTab] = useState<AboutTab>('profile');
+  const currentMeds = patient.medications.filter((m) => m.status !== 'stopped');
+  const pastMeds = patient.medications.filter((m) => m.status === 'stopped');
+  const tabs: { id: AboutTab; label: string }[] = [
+    { id: 'profile', label: 'Profile' },
+    { id: 'current', label: `Current meds (${currentMeds.length})` },
+    { id: 'past', label: `Past meds (${pastMeds.length})` },
+  ];
 
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
@@ -108,98 +117,123 @@ export const DosingBasisPanel: React.FC<DosingBasisPanelProps> = ({
         </h3>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2">
-        <Tile
-          icon={Scale}
-          label="Weight"
-          role={byWeight ? 'driver' : byBsa ? 'feeds' : 'none'}
-          roleText={byWeight ? '● Dose is calculated from this' : byBsa ? 'Used to work out BSA' : undefined}
-        >
-          <BigInput
-            label="Weight in kg"
-            value={patient.weightKg}
-            step={0.5}
-            min={2}
-            max={120}
-            onChange={(v) => onUpdateVitals(patient.id, { weightKg: Math.max(1, parseFloat(v) || 1) })}
-          />
-          <span className="text-sm text-slate-500">kg</span>
-        </Tile>
-
-        <Tile
-          icon={Ruler}
-          label="Height"
-          role={byBsa ? 'feeds' : 'none'}
-          roleText={byBsa ? 'Used to work out BSA' : undefined}
-        >
-          <BigInput
-            label="Height in cm"
-            value={patient.heightCm}
-            step={1}
-            min={40}
-            max={210}
-            onChange={(v) => onUpdateVitals(patient.id, { heightCm: Math.max(30, parseFloat(v) || 30) })}
-          />
-          <span className="text-sm text-slate-500">cm</span>
-        </Tile>
-
-        <Tile
-          icon={Calculator}
-          label="Body surface area"
-          role={byBsa ? 'driver' : 'none'}
-          roleText={byBsa ? '● Dose is calculated from this' : 'Auto-calculated (Mosteller)'}
-        >
-          <span
-            className="text-2xl font-semibold text-slate-900"
-            title="Mosteller: √((height cm × weight kg) / 3600)"
+      <div role="tablist" aria-label={`About ${firstName}`} className="flex gap-1 mb-3 border-b border-slate-200">
+        {tabs.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            aria-selected={tab === t.id}
+            onClick={() => setTab(t.id)}
+            className={`flex-1 -mb-px px-2.5 py-1.5 text-xs font-medium text-center border-b-2 cursor-pointer whitespace-nowrap ${
+              tab === t.id
+                ? 'border-indigo-600 text-indigo-700'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
           >
-            {bsaM2.toFixed(2)}
-          </span>
-          <span className="text-sm text-slate-500">m²</span>
-        </Tile>
-
-        <Tile
-          icon={Droplets}
-          label="Kidney function (CrCl)"
-          role={renalChecked ? 'check' : 'none'}
-          warn={renalWarn}
-          roleText={
-            renalWarn
-              ? 'Low — dosing interval is adjusted'
-              : renalChecked
-              ? 'Checked for this drug'
-              : 'Not used for this drug'
-          }
-          footer={
-            // Simple gauge: 0–150 mL/min with the ≤50 adjustment zone shaded
-            <div className="mt-2 relative h-1.5 rounded-full bg-slate-200 overflow-hidden" aria-hidden>
-              <div className="absolute inset-y-0 left-0 w-1/3 bg-amber-200" />
-              <div
-                className={`absolute top-0 bottom-0 w-1.5 rounded-full ${renalWarn ? 'bg-amber-600' : 'bg-slate-700'}`}
-                style={{ left: `calc(${Math.min(100, (patient.crClMlMin / 150) * 100)}% - 3px)` }}
-              />
-            </div>
-          }
-        >
-          <BigInput
-            label="Creatinine clearance in mL/min"
-            value={patient.crClMlMin}
-            step={1}
-            min={5}
-            max={160}
-            onChange={(v) => onUpdateVitals(patient.id, { crClMlMin: Math.max(5, parseInt(v, 10) || 5) })}
-          />
-          <span className="text-sm text-slate-500">mL/min</span>
-          <span className={`self-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${kidney.className}`}>
-            {kidney.label}
-          </span>
-        </Tile>
+            {t.label}
+          </button>
+        ))}
       </div>
+
+      {tab === 'profile' && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2">
+          <Tile
+            icon={Scale}
+            label="Weight"
+            role={byWeight ? 'driver' : byBsa ? 'feeds' : 'none'}
+            roleText={byWeight ? '● Dose is calculated from this' : byBsa ? 'Used to work out BSA' : undefined}
+          >
+            <BigInput
+              label="Weight in kg"
+              value={patient.weightKg}
+              step={0.5}
+              min={2}
+              max={120}
+              onChange={(v) => onUpdateVitals(patient.id, { weightKg: Math.max(1, parseFloat(v) || 1) })}
+            />
+            <span className="text-sm text-slate-500">kg</span>
+          </Tile>
+
+          <Tile
+            icon={Ruler}
+            label="Height"
+            role={byBsa ? 'feeds' : 'none'}
+            roleText={byBsa ? 'Used to work out BSA' : undefined}
+          >
+            <BigInput
+              label="Height in cm"
+              value={patient.heightCm}
+              step={1}
+              min={40}
+              max={210}
+              onChange={(v) => onUpdateVitals(patient.id, { heightCm: Math.max(30, parseFloat(v) || 30) })}
+            />
+            <span className="text-sm text-slate-500">cm</span>
+          </Tile>
+
+          <Tile
+            icon={Calculator}
+            label="Body surface area"
+            role={byBsa ? 'driver' : 'none'}
+            roleText={byBsa ? '● Dose is calculated from this' : 'Auto-calculated (Mosteller)'}
+          >
+            <span
+              className="text-2xl font-semibold text-slate-900"
+              title="Mosteller: √((height cm × weight kg) / 3600)"
+            >
+              {bsaM2.toFixed(2)}
+            </span>
+            <span className="text-sm text-slate-500">m²</span>
+          </Tile>
+
+          <Tile
+            icon={Droplets}
+            label="Kidney function (CrCl)"
+            role={renalChecked ? 'check' : 'none'}
+            warn={renalWarn}
+            roleText={
+              renalWarn
+                ? 'Low — dosing interval is adjusted'
+                : renalChecked
+                ? 'Checked for this drug'
+                : 'Not used for this drug'
+            }
+            footer={
+              // Simple gauge: 0–150 mL/min with the ≤50 adjustment zone shaded
+              <div className="mt-2 relative h-1.5 rounded-full bg-slate-200 overflow-hidden" aria-hidden>
+                <div className="absolute inset-y-0 left-0 w-1/3 bg-amber-200" />
+                <div
+                  className={`absolute top-0 bottom-0 w-1.5 rounded-full ${renalWarn ? 'bg-amber-600' : 'bg-slate-700'}`}
+                  style={{ left: `calc(${Math.min(100, (patient.crClMlMin / 150) * 100)}% - 3px)` }}
+                />
+              </div>
+            }
+          >
+            <BigInput
+              label="Creatinine clearance in mL/min"
+              value={patient.crClMlMin}
+              step={1}
+              min={5}
+              max={160}
+              onChange={(v) => onUpdateVitals(patient.id, { crClMlMin: Math.max(5, parseInt(v, 10) || 5) })}
+            />
+            <span className="text-sm text-slate-500">mL/min</span>
+            <span className={`self-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${kidney.className}`}>
+              {kidney.label}
+            </span>
+          </Tile>
+        </div>
+      )}
+
+      {tab === 'current' && <MedicationList meds={currentMeds} emptyText="No current medicines recorded" />}
+      {tab === 'past' && <MedicationList meds={pastMeds} emptyText="No past medicines recorded" />}
 
       {/* Facts that change what can be prescribed or how it's given */}
       <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
         <PatientSafetyFacts patient={patient} compact />
       </div>
+
     </section>
   );
 };

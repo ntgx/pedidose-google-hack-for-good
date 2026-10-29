@@ -473,11 +473,11 @@ def seed_fixtures(conn: sqlite3.Connection):
         # --- ServiceRequests (Prescriptions) ---
         {
             "resourceType": "ServiceRequest",
-            "id": "sr-amoxicilline-001",
+            "id": "sr-ciclosporin-001",
             "identifier": [
                 {
                     "system": "http://ehealth.fgov.be/standards/fhir/medication/NamingSystem/be-ns-prescription",
-                    "value": "BE-RECIPE-20260821-0001",
+                    "value": "BE-RECIPE-20261015-0001",
                 }
             ],
             "status": "active",
@@ -487,41 +487,29 @@ def seed_fixtures(conn: sqlite3.Connection):
                 "coding": [
                     {
                         "system": "https://www.ehealth.fgov.be/standards/fhir/medication/NamingSystem/ampp",
-                        "code": "0042895",
-                        "display": "Amoxicilline Sandoz 1000mg comp 24",
-                    },
-                    {
-                        "system": "https://www.ehealth.fgov.be/standards/fhir/medication/NamingSystem/cnk",
-                        "code": "0042895",
-                        "display": "Amoxicilline Sandoz 1000mg comp 24",
-                    },
+                        "code": "1406183",
+                        "display": "Neoral 100 mg/ml drank 50 ml",
+                    }
                 ],
-                "text": "Amoxicilline 1000mg - 1 package of 24 tablets",
+                "text": "Ciclosporin (Neoral 100 mg/mL oral solution) - 1 bottle of 50 mL",
             },
-            "quantityQuantity": {"value": 1, "unit": "package", "system": "http://unitsofmeasure.org", "code": "{package}"},
+            "quantityQuantity": {"value": 1, "unit": "bottle"},
             "subject": {
                 "identifier": {
                     "system": "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/ssin",
                     "value": "urn:be:fgov:ehealth:pseudo:v1:pat-1001-jane-doe",
-                    "_value": {
-                        "extension": [
-                            {"url": "marker", "valueBoolean": True},
-                            {"url": "version", "valueInteger": 1},
-                            {"url": "format", "valueCode": "direct"},
-                        ]
-                    },
                 }
             },
             "occurrencePeriod": {
-                "start": "2026-08-21T00:00:00Z",
-                "end": "2026-11-21T23:59:59Z",
+                "start": "2026-10-15T00:00:00Z",
+                "end": "2027-01-15T23:59:59Z",
             },
-            "authoredOn": "2026-08-21T07:30:00Z",
+            "authoredOn": "2026-10-15T07:30:00Z",
             "requester": {
                 "reference": "PractitionerRole/role-physician-dupont",
                 "display": "Dr. Jean Dupont",
             },
-            "note": [{"text": "1 tablet 3 times per day for 8 days after meals."}],
+            "note": [{"text": "75 mg (0.75 mL) twice daily by oral syringe. GVHD prophylaxis post-HSCT; trough-guided."}],
         },
         {
             "resourceType": "ServiceRequest",
@@ -539,13 +527,13 @@ def seed_fixtures(conn: sqlite3.Connection):
                 "coding": [
                     {
                         "system": "https://www.ehealth.fgov.be/standards/fhir/medication/NamingSystem/ampp",
-                        "code": "0088921",
-                        "display": "Dafalgan Forte 1g comp eff 40",
+                        "code": "2213547",
+                        "display": "Dafalgan Pediatrie 30 mg/ml drank 90 ml",
                     }
                 ],
-                "text": "Paracetamol (Dafalgan Forte 1g) - 1 package",
+                "text": "Paracetamol (Dafalgan Pediatrie 30 mg/mL) - 1 bottle of 90 mL",
             },
-            "quantityQuantity": {"value": 1, "unit": "package"},
+            "quantityQuantity": {"value": 1, "unit": "bottle"},
             "subject": {
                 "identifier": {
                     "system": "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/ssin",
@@ -561,6 +549,7 @@ def seed_fixtures(conn: sqlite3.Connection):
                 "reference": "PractitionerRole/role-physician-dupont",
                 "display": "Dr. Jean Dupont",
             },
+            "note": [{"text": "360 mg (12 mL) every 6 h as needed, max 4 doses per day."}],
         },
         {
             "resourceType": "ServiceRequest",
@@ -568,7 +557,7 @@ def seed_fixtures(conn: sqlite3.Connection):
             "identifier": [
                 {
                     "system": "http://ehealth.fgov.be/standards/fhir/medication/NamingSystem/be-ns-prescription",
-                    "value": "BE-RECIPE-20260715-0003",
+                    "value": "BE-RECIPE-20260930-0003",
                 }
             ],
             "status": "cancelled",
@@ -578,33 +567,33 @@ def seed_fixtures(conn: sqlite3.Connection):
                 "coding": [
                     {
                         "system": "https://www.ehealth.fgov.be/standards/fhir/medication/NamingSystem/ampp",
-                        "code": "0123456",
-                        "display": "Brufen 600mg comp 30",
+                        "code": "3029314",
+                        "display": "Nurofen 20 mg/ml suspensie 100 ml",
                     }
                 ],
-                "text": "Ibuprofen 600mg",
+                "text": "Ibuprofen (Nurofen 20 mg/mL oral suspension)",
             },
-            "quantityQuantity": {"value": 1, "unit": "package"},
+            "quantityQuantity": {"value": 1, "unit": "bottle"},
             "subject": {
                 "identifier": {
                     "system": "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/ssin",
                     "value": "urn:be:fgov:ehealth:pseudo:v1:pat-1002-marc-willems",
                 }
             },
-            "authoredOn": "2026-07-15T14:00:00Z",
+            "authoredOn": "2026-09-30T14:00:00Z",
             "requester": {
                 "reference": "PractitionerRole/role-physician-claes",
                 "display": "Dr. Marie Claes",
             },
-            "note": [{"text": "Cancelled due to reported NSAID sensitivity."}],
+            "note": [{"text": "Cancelled - avoid NSAIDs while platelets < 50 x10^9/L during induction."}],
         },
         {
             "resourceType": "ServiceRequest",
-            "id": "sr-atorvastatine-004",
+            "id": "sr-dexamethasone-004",
             "identifier": [
                 {
                     "system": "http://ehealth.fgov.be/standards/fhir/medication/NamingSystem/be-ns-prescription",
-                    "value": "BE-RECIPE-20250601-0004",
+                    "value": "BE-RECIPE-20260929-0004",
                 }
             ],
             "status": "stopped",
@@ -614,13 +603,13 @@ def seed_fixtures(conn: sqlite3.Connection):
                 "coding": [
                     {
                         "system": "https://www.ehealth.fgov.be/standards/fhir/medication/NamingSystem/ampp",
-                        "code": "0987654",
-                        "display": "Lipitor 20mg comp 84",
+                        "code": "4120876",
+                        "display": "Dexamethason 1 mg/ml drank 100 ml",
                     }
                 ],
-                "text": "Atorvastatine 20mg",
+                "text": "Dexamethasone 1 mg/mL oral solution",
             },
-            "quantityQuantity": {"value": 1, "unit": "package"},
+            "quantityQuantity": {"value": 1, "unit": "bottle"},
             "subject": {
                 "identifier": {
                     "system": "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/ssin",
@@ -628,13 +617,15 @@ def seed_fixtures(conn: sqlite3.Connection):
                 }
             },
             "occurrencePeriod": {
-                "start": "2025-06-01T00:00:00Z",
-                "end": "2026-06-01T23:59:59Z",
+                "start": "2026-09-29T00:00:00Z",
+                "end": "2026-10-27T23:59:59Z",
             },
-            "authoredOn": "2025-06-01T10:00:00Z",
+            "authoredOn": "2026-09-29T10:00:00Z",
             "requester": {
                 "reference": "PractitionerRole/role-physician-claes",
+                "display": "Dr. Marie Claes",
             },
+            "note": [{"text": "1.6 mg twice daily. Induction course completed; prednisolone taper follows."}],
         },
         {
             "resourceType": "ServiceRequest",
@@ -672,7 +663,49 @@ def seed_fixtures(conn: sqlite3.Connection):
             "authoredOn": "2026-08-20T11:20:00Z",
             "requester": {
                 "reference": "PractitionerRole/role-physician-dupont",
+                "display": "Dr. Jean Dupont",
             },
+            "note": [{"text": "20 mg once daily - gastric protection on corticosteroids."}],
+        },
+        {
+            "resourceType": "ServiceRequest",
+            "id": "sr-atovaquone-007",
+            "identifier": [
+                {
+                    "system": "http://ehealth.fgov.be/standards/fhir/medication/NamingSystem/be-ns-prescription",
+                    "value": "BE-RECIPE-20260905-0007",
+                }
+            ],
+            "status": "active",
+            "intent": "order",
+            "priority": "routine",
+            "code": {
+                "coding": [
+                    {
+                        "system": "https://www.ehealth.fgov.be/standards/fhir/medication/NamingSystem/ampp",
+                        "code": "2894415",
+                        "display": "Wellvone 750 mg/5 ml suspensie 226 ml",
+                    }
+                ],
+                "text": "Atovaquone (Wellvone 750 mg/5 mL oral suspension) - 1 bottle",
+            },
+            "quantityQuantity": {"value": 1, "unit": "bottle"},
+            "subject": {
+                "identifier": {
+                    "system": "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/ssin",
+                    "value": "urn:be:fgov:ehealth:pseudo:v1:pat-1003-elena-vandenberg",
+                }
+            },
+            "occurrencePeriod": {
+                "start": "2026-09-05T00:00:00Z",
+                "end": "2027-03-05T23:59:59Z",
+            },
+            "authoredOn": "2026-09-05T09:00:00Z",
+            "requester": {
+                "reference": "PractitionerRole/role-physician-dupont",
+                "display": "Dr. Jean Dupont",
+            },
+            "note": [{"text": "1500 mg (10 mL) once daily with food. PJP prophylaxis - cotrimoxazole not tolerated."}],
         },
         {
             "resourceType": "ServiceRequest",
@@ -714,7 +747,7 @@ def seed_fixtures(conn: sqlite3.Connection):
             },
             "note": [
                 {
-                    "text": "ALL Maintenance therapy (50 mg/m²/day on BSA 0.70 m² = 35 mg = 3.5 mL PO once daily in the evening without dairy). Requires Supervisor ($approve) co-signature."
+                    "text": "ALL Maintenance therapy (50 mg/m²/day on BSA 0.70 m² = 35 mg = 3.5 mL PO once daily in the evening without dairy). Requires supervisor co-signature."
                 }
             ],
         },
@@ -748,8 +781,8 @@ def seed_fixtures(conn: sqlite3.Connection):
             "intent": "order",
             "priority": "routine",
             "focus": {
-                "reference": "ServiceRequest/sr-amoxicilline-001",
-                "display": "Prescription for Amoxicilline 1000mg",
+                "reference": "ServiceRequest/sr-ciclosporin-001",
+                "display": "Prescription for Neoral 100 mg/mL oral solution",
             },
             "for": {
                 "identifier": {
@@ -757,8 +790,8 @@ def seed_fixtures(conn: sqlite3.Connection):
                     "value": "urn:be:fgov:ehealth:pseudo:v1:pat-1001-jane-doe",
                 }
             },
-            "authoredOn": "2026-08-21T07:30:00Z",
-            "lastModified": "2026-08-21T07:30:00Z",
+            "authoredOn": "2026-10-15T07:30:00Z",
+            "lastModified": "2026-10-15T07:30:00Z",
             "requester": {
                 "reference": "PractitionerRole/role-physician-dupont",
             },
@@ -771,7 +804,7 @@ def seed_fixtures(conn: sqlite3.Connection):
             "priority": "routine",
             "focus": {
                 "reference": "ServiceRequest/sr-paracetamol-002",
-                "display": "Prescription for Paracetamol 1g",
+                "display": "Prescription for Dafalgan Pediatrie 30 mg/mL",
             },
             "for": {
                 "identifier": {

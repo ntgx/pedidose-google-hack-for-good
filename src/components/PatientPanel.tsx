@@ -1,6 +1,6 @@
 import React from 'react';
 import { AlertTriangle, Check, ChevronDown, Droplets, Lock, Utensils, X } from 'lucide-react';
-import { PediatricPatient } from '../data/pediatricPatients';
+import { MedicationHistoryEntry, PediatricPatient } from '../data/pediatricPatients';
 import { calculateMostellerBsa } from '../utils/dosingCalculator';
 
 type VitalsUpdate = Partial<Pick<PediatricPatient, 'weightKg' | 'heightCm' | 'ageYears' | 'crClMlMin'>>;
@@ -90,6 +90,45 @@ export const PatientSafetyFacts: React.FC<{ patient: PediatricPatient; compact?:
     </>
   );
 };
+
+const monthYear = (iso: string) =>
+  new Date(iso).toLocaleDateString('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+
+const MedicationRow: React.FC<{ med: MedicationHistoryEntry }> = ({ med }) => (
+  <li className="py-2 first:pt-0 last:pb-0">
+    <div className="flex items-start justify-between gap-2">
+      <span className="font-medium text-slate-900">{med.name}</span>
+      {med.status === 'prn' && (
+        <span className="shrink-0 px-1.5 py-0.5 rounded bg-slate-100 text-[10px] font-semibold text-slate-600">
+          As needed
+        </span>
+      )}
+    </div>
+    <div className="text-slate-600">{med.regimen}</div>
+    <div className="text-[11px] text-slate-400">
+      {med.indication} ·{' '}
+      {med.status === 'stopped' && med.endDate
+        ? `${monthYear(med.startDate)} – ${monthYear(med.endDate)}`
+        : `since ${monthYear(med.startDate)}`}
+    </div>
+    {med.note && <div className="mt-0.5 text-[11px] text-amber-800">{med.note}</div>}
+  </li>
+);
+
+// Medication history list; past entries explain allergies and avoidances, so their notes stay visible
+export const MedicationList: React.FC<{ meds: MedicationHistoryEntry[]; emptyText: string }> = ({ meds, emptyText }) => (
+  <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs leading-relaxed">
+    {meds.length === 0 ? (
+      <div className="text-slate-500">{emptyText}</div>
+    ) : (
+      <ul className="divide-y divide-slate-100">
+        {meds.map((m) => (
+          <MedicationRow key={m.name} med={m} />
+        ))}
+      </ul>
+    )}
+  </div>
+);
 
 // Header trigger + popover card: the single home for patient context, vitals and switching
 export const PatientPanel: React.FC<PatientPanelProps> = ({
