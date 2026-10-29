@@ -6,6 +6,7 @@
 #     "uvicorn>=0.29.0",
 #     "pydantic>=2.6.0",
 #     "python-multipart>=0.0.9",
+#     "google-genai>=1.47.0",
 # ]
 # ///
 """
@@ -32,12 +33,13 @@ import json
 import os
 import sqlite3
 import uuid
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 import uvicorn
 from fastapi import Body, FastAPI, Query, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
 
 # -----------------------------------------------------------------------------
 # Configuration & Constants
@@ -1804,6 +1806,131 @@ def get_fixtures_summary():
             "patient_2": {"pseudo": "urn:be:fgov:ehealth:pseudo:v1:pat-1002-marc-willems"},
         },
     }
+
+
+# -----------------------------------------------------------------------------
+# AI Prescribing Assistant (Gemini)
+# -----------------------------------------------------------------------------
+# Claude only interprets the clinician's free-text intent into formulary picks and
+# protocol dose *rates*. All mg / mL / ceiling / renal maths stays in the frontend's
+# deterministic calculator, and the clinician must review every suggestion.
+AI_MODEL = os.getenv("PEDIDOSE_AI_MODEL", "gemini-2.5-flash")
+
+AI_SYSTEM_PROMPT = """You are a pediatric hemato-oncology prescribing assistant at UZ Gent.
+A clinician (assistant or supervisor) describes in free text what they want to give a child.
+Turn that into up to 3 ranked prescription suggestions, chosen ONLY from the formulary provided.
+
+Rules:
+- Use only medication_id and formulation_id values that appear in the formulary. Never invent drugs.
+- dose_per_unit is the protocol dose RATE in that medication's dosing basis (its doseUnitLabel, e.g. mg/kg/day
+  or mg/m²/dose). Do NOT convert to mg or mL - a deterministic calculator does that from the patient's weight/BSA.
+  If the clinician states a dose rate, use it; otherwise use the formulary default unless the stated indication
+  clearly calls for a different standard protocol rate (e.g. induction vs tapering), and explain why.
+- If the clinician states a total mg dose instead of a rate, convert it to the rate using the patient's weight or BSA
+  and say so in the rationale.
+- Pick the formulation that fits this child: respect swallowing ability, active clinical-trial sponsor stock
+  (trial drugs must use the trial IMP formulation), reimbursement, and allergies.
+- frequency_per_day and duration_days: use what the clinician said, else the formulary default and a typical
+  course length for the indication.
+- cautions: short, concrete points the clinician should verify (allergies, interactions with current meds,
+  renal function, trial rules). Leave empty if none.
+- If nothing in the formulary matches the request, return no suggestions and explain in clarification what is
+  missing or ask a short follow-up question. Also use clarification when the request is ambiguous.
+- Write rationale and cautions in the same language the clinician used."""
+
+
+class AiSuggestion(BaseModel):
+    medication_id: str
+    formulation_id: str
+    dose_per_unit: float = Field(description="Protocol dose rate in the medication's doseUnitLabel")
+    frequency_per_day: int
+    duration_days: int
+    confidence: Literal["high", "medium", "low"]
+    rationale: str
+    cautions: List[str]
+
+
+class AiSuggestionOutput(BaseModel):
+    suggestions: List[AiSuggestion]
+    clarification: str = Field(description="Empty string unless a follow-up question or explanation is needed")
+
+
+class AiSuggestRequest(BaseModel):
+    request: str
+    patient: Dict[str, Any]
+    formulary: List[Dict[str, Any]]
+
+
+@app.post(
+    "/ai/prescription-suggestions",
+    summary="AI prescribing assistant: free-text intent → formulary suggestions",
+    tags=["AI Assistant"],
+)
+def ai_prescription_suggestions(body: AiSuggestRequest):
+    if not body.request.strip():
+        return make_operation_outcome("error", "invalid", "AI_EMPTY_REQUEST", "Describe what you want to prescribe.")
+    try:
+        from google import genai
+        from google.genai import errors as genai_errors
+        from google.genai import types as genai_types
+    except ImportError:
+        return make_operation_outcome(
+            "error", "not-supported", "AI_UNAVAILABLE", "The google-genai package is not installed.", 503
+        )
+
+    try:
+        client = genai.Client()  # reads GEMINI_API_KEY / GOOGLE_API_KEY
+    except ValueError:
+        return make_operation_outcome(
+            "error", "security", "AI_UNAVAILABLE", "AI assistant is not configured (set GEMINI_API_KEY).", 503
+        )
+
+    prompt = (
+        f"<formulary>\n{json.dumps(body.formulary, ensure_ascii=False)}\n</formulary>\n\n"
+        f"<patient>\n{json.dumps(body.patient, ensure_ascii=False)}\n</patient>\n\n"
+        f"<clinician_request>\n{body.request.strip()}\n</clinician_request>"
+    )
+    try:
+        response = client.models.generate_content(
+            model=AI_MODEL,
+            contents=prompt,
+            config=genai_types.GenerateContentConfig(
+                system_instruction=AI_SYSTEM_PROMPT,
+                response_mime_type="application/json",
+                response_schema=AiSuggestionOutput,
+                temperature=0.2,
+            ),
+        )
+    except genai_errors.APIError as e:
+        if e.code in (401, 403):
+            return make_operation_outcome(
+                "error", "security", "AI_UNAVAILABLE", "AI assistant API key was rejected.", 503
+            )
+        if e.code == 429:
+            return make_operation_outcome("error", "throttled", "AI_BUSY", "AI assistant is busy, try again.", 429)
+        return make_operation_outcome("error", "exception", "AI_ERROR", f"AI service error ({e.code}).", 502)
+    except Exception as e:  # network failures surface as httpx errors
+        return make_operation_outcome("error", "transient", "AI_ERROR", f"Could not reach the AI service: {e}", 503)
+
+    output = response.parsed
+    if not isinstance(output, AiSuggestionOutput):
+        return make_operation_outcome(
+            "error", "processing", "AI_NO_ANSWER", "The AI assistant could not answer this request.", 422
+        )
+
+    # Drop anything that doesn't map onto the formulary the client sent
+    valid = {
+        m.get("id"): {f.get("id") for f in m.get("formulations", [])} for m in body.formulary
+    }
+    suggestions = [
+        s.model_dump()
+        for s in output.suggestions
+        if s.formulation_id in valid.get(s.medication_id, set())
+        and s.dose_per_unit > 0
+        and s.frequency_per_day >= 1
+        and s.duration_days >= 1
+    ]
+    return {"suggestions": suggestions, "clarification": output.clarification, "model": AI_MODEL}
 
 
 @app.get("/healthz", summary="Health check", tags=["Admin & Fixtures"])

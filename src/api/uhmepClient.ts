@@ -135,6 +135,24 @@ export interface ApiExchangeLog {
   responseHeaders: Record<string, string>;
 }
 
+// One suggestion from the AI prescribing assistant (dose is a protocol rate, never mg/mL)
+export interface AiPrescriptionSuggestion {
+  medication_id: string;
+  formulation_id: string;
+  dose_per_unit: number;
+  frequency_per_day: number;
+  duration_days: number;
+  confidence: 'high' | 'medium' | 'low';
+  rationale: string;
+  cautions: string[];
+}
+
+export interface AiPrescriptionSuggestionResponse {
+  suggestions: AiPrescriptionSuggestion[];
+  clarification: string;
+  model: string;
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 let exchangeListeners: Array<(log: ApiExchangeLog) => void> = [];
@@ -302,6 +320,16 @@ export const uhmepClient = {
 
   async getServiceRequestGraph(role: ClinicalRole, id: string) {
     return fhirFetch<FhirBundle>(`/ServiceRequest/${id}/$graph`, role);
+  },
+
+  async suggestPrescriptions(
+    role: ClinicalRole,
+    body: { request: string; patient: Record<string, unknown>; formulary: Array<Record<string, unknown>> }
+  ) {
+    return fhirFetch<AiPrescriptionSuggestionResponse>('/ai/prescription-suggestions', role, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
   },
 
   async listTasks(role: ClinicalRole, status?: string) {

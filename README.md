@@ -65,4 +65,5 @@ Open `http://localhost:5173` in your browser.
 
 When deploying the frontend (e.g., Vercel, Netlify, Render, Cloud Run) and the FastAPI backend (`mock-api-server/`):
 
+- Set `GEMINI_API_KEY` on the FastAPI server to enable the AI prescribing assistant (optional `PEDIDOSE_AI_MODEL`, default `gemini-2.5-flash`). Without it the Prescribe tab falls back to a plain formulary keyword match.
 - Set `VITE_API_URL` on the frontend build to point to your deployed FastAPI server URL (defaults to `http://localhost:8000` in local development).

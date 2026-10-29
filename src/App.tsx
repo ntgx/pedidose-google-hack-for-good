@@ -37,6 +37,7 @@ import { WorkflowHubView } from './components/WorkflowHubView';
 import { CaregiverPortalView } from './components/CaregiverPortalView';
 import { OnboardingFlow } from './components/OnboardingFlow';
 import { DemoCaseMenu } from './components/DemoCaseMenu';
+import { AppliedSuggestion } from './components/AiPrescribeAssistant';
 
 type ActiveTab = 'prescriber' | 'workflow' | 'caregiver';
 
@@ -184,6 +185,17 @@ export const App: React.FC = () => {
     setSelectedFormulation(med.formulations[0]);
     setDosePerUnit(med.defaultDosePerUnit);
     setFrequencyPerDay(med.defaultFrequencyPerDay);
+    setOverrideVolumeMl(null);
+  };
+
+  // Take over an AI suggestion the prescriber has checked (and possibly adjusted)
+  const handleApplySuggestion = (s: AppliedSuggestion) => {
+    setActivePresetId(null);
+    setSelectedMedication(s.medication);
+    setSelectedFormulation(s.formulation);
+    setDosePerUnit(s.dosePerUnit);
+    setFrequencyPerDay(s.frequencyPerDay);
+    setDurationDays(s.durationDays);
     setOverrideVolumeMl(null);
   };
 
@@ -424,6 +436,7 @@ export const App: React.FC = () => {
             onStepChange={setPrescriberStep}
             onSelectMedication={handleSelectMedication}
             onSelectFormulation={handleSelectFormulation}
+            onApplySuggestion={handleApplySuggestion}
             onChangeDosePerUnit={setDosePerUnit}
             onChangeFrequencyPerDay={setFrequencyPerDay}
             onChangeDurationDays={setDurationDays}

@@ -30,6 +30,7 @@ import { SyringeVisualizer } from './SyringeVisualizer';
 import { DosingBasisPanel } from './DosingBasisPanel';
 import { DoseCeilingChart } from './DoseCeilingChart';
 import { TaperingChart } from './TaperingChart';
+import { AiPrescribeAssistant, AppliedSuggestion } from './AiPrescribeAssistant';
 import { Alert, Badge, Button, Tone } from './ui';
 
 interface SmartPrescriberViewProps {
@@ -46,6 +47,7 @@ interface SmartPrescriberViewProps {
   onStepChange: (step: number) => void;
   onSelectMedication: (med: FormularyMedication) => void;
   onSelectFormulation: (form: FormularyFormulation) => void;
+  onApplySuggestion: (s: AppliedSuggestion) => void;
   onChangeDosePerUnit: (val: number) => void;
   onChangeFrequencyPerDay: (val: number) => void;
   onChangeDurationDays: (val: number) => void;
@@ -147,6 +149,7 @@ export const SmartPrescriberView: React.FC<SmartPrescriberViewProps> = ({
   onStepChange,
   onSelectMedication,
   onSelectFormulation,
+  onApplySuggestion,
   onChangeDosePerUnit,
   onChangeFrequencyPerDay,
   onChangeDurationDays,
@@ -424,17 +427,30 @@ export const SmartPrescriberView: React.FC<SmartPrescriberViewProps> = ({
           {/* STEP 1 — Medication */}
           {step === 0 && (
             <div className="space-y-4">
-              <StepHeading
-                title="Which medication?"
-                hint="Search by drug, brand, indication, ATC code or hospital magistral code (codes starting with !)."
+              <StepHeading title="What do you want to prescribe?" />
+              <AiPrescribeAssistant
+                activeRole={activeRole}
+                patient={patient}
+                customTrialLocks={customTrialLocks}
+                onApply={(s, openEditor) => {
+                  onApplySuggestion(s);
+                  setClinicalNote(s.provenanceNote);
+                  goTo(openEditor ? 2 : 3);
+                }}
               />
+
+              <div className="flex items-center gap-3 pt-2">
+                <span className="h-px flex-1 bg-slate-200" />
+                <span className="text-xs text-slate-500">or browse the formulary</span>
+                <span className="h-px flex-1 bg-slate-200" />
+              </div>
               <div className="relative">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="e.g. prednisolone, Noxafil, !PURI, stem cell transplant…"
+                  placeholder="Search by drug, brand, indication, ATC or !CODE (e.g. prednisolone, Noxafil, !PURI)"
                   className="w-full pl-9 pr-3 py-2.5 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
