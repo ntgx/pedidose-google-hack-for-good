@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PediDose — Visual Architecture & Clinical Features Guide</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased min-h-screen">
+  <!-- Top Hero Banner -->
+  <header class="border-b border-slate-800 bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900">
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/15 border border-teal-400/30 text-teal-300 text-xs font-bold uppercase tracking-wider">
+            <span>UC2 Pediatric Prescriber • Belgian UHMEP v1.4 &amp; Recip-e FHIR R4</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+            PediDose — Visual Feature &amp; Architecture Guide
+          </h1>
+          <p class="text-sm sm:text-base text-slate-300 max-w-3xl">
+            Interactive visual documentation explaining the deterministic pediatric dosing engine, 5 clinical safety guardrails, multi-role Belgian FHIR R4 workflow, and self-learning caregiver companion built in <code class="text-teal-300 font-mono">pedidose-app/</code>.
+          </p>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-4 text-xs space-y-1.5 font-mono">
+          <div class="text-slate-400 uppercase font-sans font-bold text-xs">Live Local Endpoints</div>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+            <span class="text-slate-300">Frontend App:</span>
+            <a href="http://localhost:5173" target="_blank" class="text-teal-300 underline font-bold">http://localhost:5173</a>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-indigo-400"></span>
+            <span class="text-slate-300">FHIR R4 Server:</span>
+            <a href="http://localhost:8000/docs" target="_blank" class="text-indigo-300 underline font-bold">http://localhost:8000/docs</a>
+          </div>
+          <div class="pt-1 border-t border-slate-800">
+            <a href="./presentation.html" class="inline-flex items-center gap-1.5 text-amber-300 hover:text-amber-200 underline font-sans font-bold">
+              Open 8-Slide Hackathon Pitch Deck (presentation.html) →
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Section Navigation Tabs -->
+      <nav class="mt-7 flex flex-wrap gap-2" id="nav-tabs">
+        <button onclick="switchSection('guardrails')" id="btn-guardrails" class="nav-btn px-4 py-2.5 rounded-xl text-xs font-bold bg-teal-500 text-slate-950 shadow-md cursor-pointer transition-all">
+          1. The 5 Clinical Safety Guardrails
+        </button>
+        <button onclick="switchSection('fhir-workflow')" id="btn-fhir-workflow" class="nav-btn px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800/90 text-slate-300 hover:bg-slate-700 cursor-pointer transition-all">
+          2. UHMEP v1.4 FHIR R4 State Machine
+        </button>
+        <button onclick="switchSection('caregiver-kb')" id="btn-caregiver-kb" class="nav-btn px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800/90 text-slate-300 hover:bg-slate-700 cursor-pointer transition-all">
+          3. Caregiver Companion &amp; Self-Learning KB
+        </button>
+        <button onclick="switchSection('architecture')" id="btn-architecture" class="nav-btn px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800/90 text-slate-300 hover:bg-slate-700 cursor-pointer transition-all">
+          4. System Architecture &amp; File Map
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <!-- SECTION 1: THE 5 CLINICAL SAFETY GUARDRAILS -->
+    <section id="panel-guardrails" class="tab-panel active space-y-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left 7 Cols: Interactive 10x Syringe & Vincristine Ceiling Simulator -->
+        <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-teal-400">Interactive Visual Explainer</span>
+              <h2 class="text-xl font-bold text-white mt-0.5">Deterministic Dosing &amp; Physical Syringe Guardrails</h2>
+              <p class="text-xs text-slate-400 mt-1">
+                Zero generative math: all calculations in <code class="text-teal-300 font-mono">src/utils/dosingCalculator.ts</code> follow strict Mosteller BSA and Kinderformularium / UZ Gent PHO rules.
+              </p>
+            </div>
+          </div>
+
+          <!-- Interactive 10x Oral Syringe Simulator -->
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span class="px-2.5 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-bold">
+                  Case 3 • 10x Oral Syringe Volume Trap
+                </span>
+                <h3 class="text-base font-bold text-white mt-1">
+                  Prednisolone 10 mg/mL — Toddler (Marc Willems, 2y, 12 kg)
+                </h3>
+                <p class="text-xs text-slate-400">
+                  Target dose: <strong class="text-teal-300">0.25 mg/kg/day × 12 kg = 3.0 mg</strong>. On a <strong class="text-white">10 mg/mL</strong> solution, that equals <strong class="text-teal-300">0.30 mL</strong> — NOT 3.0 mL!
+                </p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="setSyringeDemo(3.0)" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold cursor-pointer">
+                  Simulate 3.0 mL (10x Error)
+                </button>
+                <button onclick="setSyringeDemo(0.3)" class="px-3 py-1.5 rounded-lg bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold cursor-pointer">
+                  Snap to Safe 0.30 mL
+                </button>
+              </div>
+            </div>
+
+            <!-- SVG Syringe Barrel -->
+            <div class="bg-slate-900 rounded-xl p-4 border border-slate-800">
+              <svg viewBox="0 0 620 105" class="w-full h-24">
+                <!-- Nozzle -->
+                <rect x="10" y="38" width="26" height="18" rx="3" fill="#9333ea" />
+                <text x="10" y="30" font-size="10" font-weight="bold" fill="#c084fc">EnFit</text>
+                <!-- Barrel (x=36 to x=456 -> width 420, represents 0 to 3.0 mL) -->
+                <rect x="36" y="20" width="420" height="54" rx="4" fill="#0f172a" stroke="#475569" stroke-width="2" />
+                <!-- Danger fill bar (shown when 3.0 mL selected) -->
+                <rect id="demo-danger-bar" x="37" y="21" width="418" height="52" fill="rgba(244, 63, 94, 0.35)" />
+                <!-- Safe 0.30 mL fill bar (10% of 3.0 mL = 42px) -->
+                <rect x="37" y="21" width="42" height="52" fill="rgba(20, 184, 166, 0.65)" />
+                <!-- Safe marker line -->
+                <line x1="79" y1="10" x2="79" y2="85" stroke="#2dd4bf" stroke-width="2.5" stroke-dasharray="4 2" />
+                <text x="45" y="12" font-size="10" font-weight="bold" fill="#2dd4bf">SAFE: 0.30 mL (3 mg)</text>
+                <!-- Plunger Gasket -->
+                <rect id="demo-plunger-head" x="446" y="21" width="10" height="52" rx="2" fill="#dc2626" />
+                <rect id="demo-plunger-rod" x="456" y="37" width="110" height="20" fill="#f43f5e" />
+                <!-- Ticks -->
+                <text x="36" y="92" font-size="10" fill="#94a3b8" font-family="monospace">0.0 mL</text>
+                <text x="72" y="92" font-size="10" fill="#2dd4bf" font-weight="bold" font-family="monospace">0.3 mL</text>
+                <text x="176" y="92" font-size="10" fill="#94a3b8" font-family="monospace">1.0 mL</text>
+                <text x="316" y="92" font-size="10" fill="#94a3b8" font-family="monospace">2.0 mL</text>
+                <text x="435" y="92" font-size="10" fill="#f87171" font-weight="bold" font-family="monospace">3.0 mL (30 mg!)</text>
+              </svg>
+              <div id="demo-syringe-status" class="mt-2 text-xs font-bold text-rose-400">
+                HARD STOP ACTIVE: 3.00 mL = 30.0 mg (10x Overdose!). Submission to FHIR Server is blocked until snapped to 0.30 mL.
+              </div>
+            </div>
+          </div>
+
+          <!-- Mosteller BSA & Vincristine 2.0 mg Hard Cap Visual -->
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">
+                Case 4 • Vincristine 2.00 mg Hard Ceiling
+              </span>
+              <span class="text-xs font-mono text-slate-400">Elena Vandenberg (15y • 60 kg • 166 cm → BSA 1.66 m²)</span>
+            </div>
+            <p class="text-xs text-slate-300">
+              Protocol formula <code class="text-teal-300">1.5 mg/m² × 1.66 m²</code> yields <strong class="text-rose-400 line-through">2.49 mg</strong>. PediDose deterministically clamps the single dose to <strong class="text-teal-300">2.00 mg</strong> to prevent severe Vinca neurotoxicity / paralytic ileus.
+            </p>
+            <div class="space-y-2 pt-1">
+              <div class="flex items-center gap-3 text-xs">
+                <span class="w-36 text-slate-400">Raw BSA Calculation:</span>
+                <div class="flex-1 bg-slate-900 rounded-lg h-6 overflow-hidden border border-slate-800 flex items-center">
+                  <div class="bg-rose-500/40 border-r-2 border-rose-400 h-full flex items-center px-3 font-mono font-bold text-rose-200" style="width: 100%">
+                    2.49 mg (Exceeds Neurotoxicity Ceiling by +24.5%)
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 text-xs">
+                <span class="w-36 text-teal-300 font-bold">PediDose Clamped Dose:</span>
+                <div class="flex-1 bg-slate-900 rounded-lg h-6 overflow-hidden border border-slate-800 flex items-center">
+                  <div class="bg-teal-500 h-full flex items-center px-3 font-mono font-bold text-slate-950" style="width: 80.3%">
+                    2.00 mg HARD CAP ENFORCED
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: Trial Lock, Convention vs Chapter IV & Renal Guardrails -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-purple-950/70 border border-purple-700/80 rounded-2xl p-5 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-purple-300">Case 1 • Clinical Trial Sourcing Lock</span>
+              <span class="px-2 py-0.5 rounded bg-purple-800 text-purple-100 font-mono text-xs">HEM-iSmart</span>
+            </div>
+            <h3 class="text-base font-bold text-white">Ruxolitinib (Jakavi) Commercial Recip-e Block</h3>
+            <p class="text-xs text-purple-200 leading-relaxed">
+              When a patient is enrolled in <strong class="text-white">HEM-iSmart</strong>, Ruxolitinib is supplied free of charge by the trial sponsor. Selecting commercial Jakavi (CNK <code class="font-mono">2948107</code>) triggers a hard lock preventing a €3,200+ billing error and offers a 1-click switch to Hospital Trial Pharmacy IMP stock (<code class="font-mono">IMP-HEMISMRT-RUX5</code>).
+            </p>
+          </div>
+
+          <div class="bg-amber-950/50 border border-amber-700/70 rounded-2xl p-5 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-300">Case 2 • Belgian Reimbursement &amp; PK Intelligence</span>
+              <span class="px-2 py-0.5 rounded bg-amber-800/80 text-amber-100 font-mono text-xs">RIZIV §4460100</span>
+            </div>
+            <h3 class="text-base font-bold text-white">Posaconazole: Oncology Convention vs. Crushed 100 mg Tablet</h3>
+            <p class="text-xs text-amber-100/90 leading-relaxed">
+              Warns prescribers that <strong class="text-white">Noxafil 40 mg/mL Oral Suspension</strong> is <em>only</em> reimbursed via the <strong class="text-white">Belgian Pediatric Oncology Convention</strong> (National Tumor Board) and loses 32% absorption with Omeprazole. Recommends switching to <strong class="text-teal-300">Posaconazole 100 mg Gastro-Resistant Tablets</strong> (reimbursed via standard RIZIV Chapter IV Bijlage A) which, per UZ Gent PHO TDM data, can be crushed in apple purée to achieve therapeutic trough levels (&gt;0.7 mg/L).
+            </p>
+          </div>
+
+          <div class="bg-sky-950/50 border border-sky-700/70 rounded-2xl p-5 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-300">Case 5 • Renal CrCl + UZ Gent !CODE Magistral</span>
+              <span class="px-2 py-0.5 rounded bg-sky-800/80 text-sky-100 font-mono text-xs">!PREDNI / !PURI / !OMEPED</span>
+            </div>
+            <h3 class="text-base font-bold text-white">Aciclovir Renal Interval Adaptation &amp; Hospital Magistral</h3>
+            <p class="text-xs text-sky-100/90 leading-relaxed">
+              Combines UZ Gent PHO SCT weight tiers (<code class="font-mono">&lt;40 kg: 3×250 mg/m²</code> vs <code class="font-mono">≥40 kg: 2×250 mg/m²</code>) with automatic renal interval extension when <code class="font-mono">CrCl ≤ 50 mL/min</code>, plus native support for UZ Gent EPD magistral building blocks (<code class="font-mono">!PREDNI</code>, <code class="font-mono">!PURI</code>, <code class="font-mono">!OMEPED</code>).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: UHMEP v1.4 FHIR R4 WORKFLOW -->
+    <section id="panel-fhir-workflow" class="tab-panel space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Belgian UHMEP v1.4 Implementation Guide</span>
+          <h2 class="text-xl font-bold text-white mt-0.5">Multi-Role FHIR R4 Prescription &amp; Dispensing Lifecycle</h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Every action in PediDose sends live FHIR R4 requests to <code class="text-teal-300 font-mono">mock-api-server/server.py</code> with <code class="text-indigo-300 font-mono">X-Role</code>, <code class="text-indigo-300 font-mono">Accept-Be-Pseudo: urn:be:fgov:ehealth:pseudo:v1</code>, and <code class="text-indigo-300 font-mono">Correlation-Id</code> headers.
+          </p>
+        </div>
+
+        <!-- 4-Stage Visual Pipeline -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="bg-slate-950 border border-amber-500/40 rounded-xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-amber-300">STEP 1 • ASSISTANT</span>
+              <span class="font-mono text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-200">X-Role: assistant</span>
+            </div>
+            <div class="text-sm font-bold text-white">Draft Prescription</div>
+            <p class="text-xs text-slate-400">
+              <code class="text-teal-300 font-mono">POST /ServiceRequest</code> creates a <code class="font-mono text-amber-300">draft</code> order and automatically spawns a linked <code class="font-mono text-indigo-300">Task</code> in <code class="font-mono">requested</code> state.
+            </p>
+          </div>
+
+          <div class="bg-slate-950 border border-rose-500/40 rounded-xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-rose-300">ROLE GUARDRAIL</span>
+              <span class="font-mono text-xs px-2 py-0.5 rounded bg-rose-500/20 text-rose-200">HTTP 403</span>
+            </div>
+            <div class="text-sm font-bold text-white">Assistant $approve Blocked</div>
+            <p class="text-xs text-slate-400">
+              If <code class="font-mono">X-Role: assistant</code> calls <code class="font-mono">POST /ServiceRequest/{id}/$approve</code>, <code class="font-mono">server.py</code> rejects it with a FHIR <code class="text-rose-300 font-mono">OperationOutcome (INSUFFICIENT_ROLE_PRIVILEGES)</code>.
+            </p>
+          </div>
+
+          <div class="bg-slate-950 border border-indigo-500/40 rounded-xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-indigo-300">STEP 2 • SUPERVISOR</span>
+              <span class="font-mono text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-200">X-Role: supervisor</span>
+            </div>
+            <div class="text-sm font-bold text-white">Supervisor Co-Sign ($approve)</div>
+            <p class="text-xs text-slate-400">
+              <code class="text-teal-300 font-mono">POST /ServiceRequest/{id}/$approve</code> transitions status to <code class="font-mono text-indigo-300">active</code> and appends the Belgian <code class="font-mono text-teal-300">be-ext-approval</code> extension.
+            </p>
+          </div>
+
+          <div class="bg-slate-950 border border-emerald-500/40 rounded-xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-emerald-300">STEP 3 • PHARMACIST</span>
+              <span class="font-mono text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200">X-Role: pharmacist</span>
+            </div>
+            <div class="text-sm font-bold text-white">Task Dispensing &amp; $graph</div>
+            <p class="text-xs text-slate-400">
+              <code class="text-teal-300 font-mono">PATCH /Task/{id}</code> (<code class="font-mono">in-progress</code> → <code class="font-mono text-emerald-300">completed</code>) automatically transitions the parent <code class="font-mono">ServiceRequest</code> to <code class="font-mono text-emerald-300">completed</code>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: CAREGIVER COMPANION & SELF-LEARNING KB -->
+    <section id="panel-caregiver-kb" class="tab-panel space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-rose-400">UZ Gent PHO Caregiver Companion</span>
+          <h3 class="text-lg font-bold text-white">Dose-Matched Home Instructions &amp; Steroid Tapering Calendar</h3>
+          <ul class="space-y-2 text-xs text-slate-300 list-disc list-inside leading-relaxed">
+            <li>Translates complex oncology prescriptions into parent-friendly morning/evening syringe guides (<code class="text-teal-300">toedienen_van_vloebare_medicijnen.pdf</code>, <code class="text-teal-300">orale_cytostatica_toedienen.pdf</code>).</li>
+            <li>Generates a printable 4-phase <strong>Corticosteroid Step-Down Tapering Schedule</strong> with exact mL syringe marks for each phase so caregivers never trigger acute adrenal insufficiency.</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Closed-Loop Clinical Intelligence</span>
+          <h3 class="text-lg font-bold text-white">AI Traffic-Light Screener &amp; Pharmacist Moderation Gate</h3>
+          <ul class="space-y-2 text-xs text-slate-300 list-disc list-inside leading-relaxed">
+            <li><strong class="text-rose-400">RED (Blocked):</strong> Flags grapefruit juice / pompelmoes submissions due to irreversible intestinal CYP3A4 inhibition (causes severe Vincristine/Ruxolitinib/Tacrolimus toxicity).</li>
+            <li><strong class="text-amber-300">AMBER (Caution):</strong> Flags warm milk with <em>Losec MUPS</em> (alkaline pH strips enteric pellets) or cow milk xanthine oxidase degradation of <em>6-Mercaptopurine</em>.</li>
+            <li><strong class="text-emerald-300">GREEN (Approved Gold Standard):</strong> Pharmacists review and promote safe tips (e.g., crushed Posaconazole 100 mg tablet in 1 tsp cold apple purée, water-ice popsicle before Prednisolone).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: SYSTEM ARCHITECTURE & FILE MAP -->
+    <section id="panel-architecture" class="tab-panel space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+        <h2 class="text-xl font-bold text-white">Self-Contained Repository Structure (<code class="text-teal-300 font-mono">pedidose-app/</code>)</h2>
+        <p class="text-xs text-slate-400">
+          Both the React/Vite frontend and the FastAPI UHMEP FHIR R4 mock server live inside <code class="text-white font-mono">2. Pediatric Prescriber/pedidose-app/</code> for single-repo GitHub push and deployment.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
+            <div class="text-teal-400 font-bold">Frontend Application (src/)</div>
+            <div class="text-slate-300">├── api/uhmepClient.ts <span class="text-slate-500">// Typed FHIR R4 HTTP client &amp; telemetry</span></div>
+            <div class="text-slate-300">├── data/pediatricPatients.ts <span class="text-slate-500">// Pseudo-SSIN patients &amp; vitals</span></div>
+            <div class="text-slate-300">├── data/clinicalFormulary.ts <span class="text-slate-500">// SAM/CNK, !CODE, Trial locks &amp; 5 Cases</span></div>
+            <div class="text-slate-300">├── data/knowledgeBaseSeed.ts <span class="text-slate-500">// UZ Gent guides &amp; moderated tips</span></div>
+            <div class="text-slate-300">├── utils/dosingCalculator.ts <span class="text-slate-500">// Mosteller BSA, 2mg cap, 10x guard</span></div>
+            <div class="text-slate-300">├── components/SmartPrescriberView.tsx <span class="text-slate-500">// Tab 1 Prescriber &amp; Bijlage A</span></div>
+            <div class="text-slate-300">├── components/SyringeVisualizer.tsx <span class="text-slate-500">// Interactive EnFit SVG syringe</span></div>
+            <div class="text-slate-300">├── components/WorkflowHubView.tsx <span class="text-slate-500">// Tab 2 $approve, Task &amp; $graph</span></div>
+            <div class="text-slate-300">└── components/CaregiverPortalView.tsx <span class="text-slate-500">// Tab 3 Caregiver &amp; AI KB</span></div>
+          </div>
+
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
+            <div class="text-indigo-400 font-bold">Backend &amp; Docs (mock-api-server/ &amp; docs/)</div>
+            <div class="text-slate-300">├── mock-api-server/server.py <span class="text-slate-500">// FastAPI UHMEP v1.4 FHIR R4 server</span></div>
+            <div class="text-slate-300">├── mock-api-server/requirements.txt <span class="text-slate-500">// Python dependencies</span></div>
+            <div class="text-slate-300">├── docs/index.html <span class="text-slate-500">// This interactive visual documentation</span></div>
+            <div class="text-slate-300">└── README.md <span class="text-slate-500">// Quickstart &amp; deployment documentation</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function switchSection(sectionId) {
+      document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
+      document.getElementById('panel-' + sectionId).classList.add('active');
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.className = 'nav-btn px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800/90 text-slate-300 hover:bg-slate-700 cursor-pointer transition-all';
+      });
+      const activeBtn = document.getElementById('btn-' + sectionId);
+      activeBtn.className = 'nav-btn px-4 py-2.5 rounded-xl text-xs font-bold bg-teal-500 text-slate-950 shadow-md cursor-pointer transition-all';
+    }
+
+    function setSyringeDemo(volMl) {
+      const dangerBar = document.getElementById('demo-danger-bar');
+      const plungerHead = document.getElementById('demo-plunger-head');
+      const plungerRod = document.getElementById('demo-plunger-rod');
+      const status = document.getElementById('demo-syringe-status');
+
+      if (volMl > 1.0) {
+        dangerBar.setAttribute('width', '418');
+        plungerHead.setAttribute('x', '446');
+        plungerHead.setAttribute('fill', '#dc2626');
+        plungerRod.setAttribute('x', '456');
+        plungerRod.setAttribute('fill', '#f43f5e');
+        status.className = 'mt-2 text-xs font-bold text-rose-400';
+        status.textContent = 'HARD STOP ACTIVE: 3.00 mL = 30.0 mg (10x Overdose!). Submission to FHIR Server is blocked until snapped to 0.30 mL.';
+      } else {
+        dangerBar.setAttribute('width', '0');
+        plungerHead.setAttribute('x', '79');
+        plungerHead.setAttribute('fill', '#14b8a6');
+        plungerRod.setAttribute('x', '89');
+        plungerRod.setAttribute('fill', '#9333ea');
+        status.className = 'mt-2 text-xs font-bold text-teal-300';
+        status.textContent = 'SAFE DOSE VERIFIED: 0.30 mL = 3.0 mg on 10 mg/mL solution. Ready for POST /ServiceRequest.';
+      }
+    }
+  </script>
+</body>
+</html>

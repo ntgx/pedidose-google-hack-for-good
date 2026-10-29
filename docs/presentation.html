@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PediDose — Hackathon Pitch Deck (UC2 Pediatric Prescriber)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow: hidden;
+    }
+    .slide {
+      display: none;
+      animation: fadeIn 0.28s ease-out;
+    }
+    .slide.active {
+      display: flex;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 h-screen w-screen flex flex-col select-none">
+
+  <!-- Top Progress & Deck Header Bar -->
+  <header class="h-14 border-b border-slate-800/80 bg-slate-950/90 px-6 flex items-center justify-between shrink-0 z-20">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-indigo-600 flex items-center justify-center font-black text-slate-950 text-sm">
+        P
+      </div>
+      <span class="font-bold text-sm tracking-tight text-white">PediDose</span>
+      <span class="text-xs px-2.5 py-0.5 rounded-full bg-teal-500/15 text-teal-300 border border-teal-500/30 font-semibold">
+        Hackathon Pitch Deck • UC2 Pediatric Prescriber
+      </span>
+    </div>
+
+    <!-- Slide Dots -->
+    <div class="flex items-center gap-1.5" id="slide-dots"></div>
+
+    <!-- Controls & Links -->
+    <div class="flex items-center gap-2 text-xs">
+      <a href="http://localhost:5173" target="_blank" class="px-3 py-1.5 rounded-lg bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 border border-teal-500/30 font-bold transition-colors">
+        Launch Live App (:5173) ↗
+      </a>
+      <button onclick="toggleSpeakerNotes()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold cursor-pointer">
+        Notes (N)
+      </button>
+      <button onclick="toggleFullScreen()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold cursor-pointer">
+        Fullscreen (F)
+      </button>
+    </div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="h-1 w-full bg-slate-900 shrink-0">
+    <div id="progress-bar" class="h-full bg-gradient-to-r from-teal-400 to-indigo-500 transition-all duration-300" style="width: 12.5%"></div>
+  </div>
+
+  <!-- SLIDES CONTAINER -->
+  <main class="flex-1 relative overflow-y-auto px-8 sm:px-16 py-8 flex items-center justify-center">
+
+    <!-- SLIDE 1: TITLE & HOOK -->
+    <section class="slide active flex-col justify-center max-w-6xl w-full space-y-8" data-notes="Open with the core truth of pediatrics: children are not small adults. In pediatric hemato-oncology, every single prescription is a high-stakes calculation across weight, Body Surface Area, organ maturity, compounded liquids, and complex Belgian reimbursement rules.">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/15 border border-indigo-400/30 text-indigo-300 text-xs font-bold uppercase tracking-widest w-fit">
+        Belgian UHMEP v1.4 • Recip-e FHIR R4 • UZ Gent Pediatric Hemato-Oncology
+      </div>
+
+      <div class="space-y-4">
+        <h1 class="text-5xl sm:text-6xl font-black tracking-tight text-white leading-tight">
+          PediDose: <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-cyan-300 to-indigo-400">Zero-Error</span> Pediatric Oncology Prescribing
+        </h1>
+        <p class="text-lg sm:text-xl text-slate-300 max-w-4xl leading-relaxed">
+          Bridging the hospital-to-home gap with <strong class="text-white">deterministic clinical guardrails</strong>, <strong class="text-teal-300">Belgian SAM / Magistral / Trial sourcing intelligence</strong>, and a <strong class="text-indigo-300">self-learning caregiver companion</strong>.
+        </p>
+      </div>
+
+      <!-- 3 Impact Stat Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+          <div class="text-3xl font-black text-rose-400 font-mono">3x Higher</div>
+          <div class="text-sm font-bold text-white">Potential ADE Rate in Pediatrics</div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Weight/BSA micro-calculations, decimal-point liquid dilutions (0.3 mL vs 3.0 mL), and narrow-index chemotherapy leave zero margin for error.
+          </p>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+          <div class="text-3xl font-black text-amber-300 font-mono">€650 – €3,200</div>
+          <div class="text-sm font-bold text-white">Preventable Reimbursement &amp; Trial Traps</div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Prescribing commercial <em>Jakavi</em> during the <code>HEM-iSmart</code> trial or outpatient <em>Noxafil</em> suspension without Oncology Convention approval creates massive financial shocks.
+          </p>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-2">
+          <div class="text-3xl font-black text-teal-300 font-mono">100% Deterministic</div>
+          <div class="text-sm font-bold text-white">Safety Math + AI-Screened Wisdom</div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            No LLM hallucinations in dosing math — paired with an AI Traffic-Light PK gate and Pharmacist moderation for home administration tips.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: THE PROBLEM (4 DEADLY TRAPS) -->
+    <section class="slide flex-col justify-center max-w-6xl w-full space-y-6" data-notes="Walk the judges through the 4 real-world traps documented in the UZ Gent Pediatric Hemato-Oncology reference files: 10x liquid syringe overdoses, Vincristine neurotoxicity caps, Belgian trial/convention reimbursement traps, and the kitchen-table crisis at home.">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-widest text-rose-400">The Clinical Challenge</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-1">
+          Why Standard Adult E-Prescribing Fails Pediatric Oncology
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-slate-900 border-l-4 border-rose-500 rounded-r-2xl p-5 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase text-rose-400">Trap 1 • The 10x Oral Syringe Overdose</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">0.3 mL vs 3.0 mL</span>
+          </div>
+          <h3 class="text-base font-bold text-white">Decimal Confusion on Concentrated Liquids</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            A 2-year-old toddler (12 kg) tapering <strong>Prednisolone (10 mg/mL)</strong> needs <code>3.0 mg = 0.30 mL</code>. Entering <code>3.0 mL</code> delivers <strong>30 mg (a 10-fold overdose)</strong> because EHRs lack physical syringe visualization.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border-l-4 border-amber-500 rounded-r-2xl p-5 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase text-amber-400">Trap 2 • Protocol Ceiling &amp; Renal Blindness</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Max 2.00 mg Cap</span>
+          </div>
+          <h3 class="text-base font-bold text-white">Unclamped BSA Dosing &amp; Post-SCT Renal Shifts</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            For a 15-year-old adolescent (60 kg, 166 cm → BSA <code>1.66 m²</code>), raw <strong>Vincristine</strong> <code>1.5 mg/m²</code> equals <code>2.49 mg</code> — causing severe neurotoxicity unless hard-clamped at <strong>2.00 mg</strong>.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border-l-4 border-purple-500 rounded-r-2xl p-5 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase text-purple-400">Trap 3 • Belgian Reimbursement &amp; Trial Silos</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">HEM-iSmart &amp; RIZIV</span>
+          </div>
+          <h3 class="text-base font-bold text-white">Convention vs. Chapter IV &amp; Sponsor IMP Stock</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            <strong>Noxafil 40 mg/mL Suspension</strong> is only reimbursed via the <em>Belgian Pediatric Oncology Convention</em>, whereas <strong>100 mg Tablets</strong> are covered under <em>RIZIV Chapter IV (§4460100)</em>. Meanwhile, <strong>Ruxolitinib</strong> in <code>HEM-iSmart</code> must be locked from commercial Recip-e.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border-l-4 border-teal-500 rounded-r-2xl p-5 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase text-teal-400">Trap 4 • The Kitchen-Table Crisis at Home</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-teal-500/20 text-teal-300">Adherence &amp; PK</span>
+          </div>
+          <h3 class="text-base font-bold text-white">Bitter Steroids, Crushed Tablets &amp; Unverified Advice</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Caregivers struggle to give bitter <em>Medrol</em> or oral chemo (<code>!PURI</code>). Without validated tips, parents may mix drugs into <strong>grapefruit juice</strong> (CYP3A4 toxicity) or <strong>warm milk</strong> (destroying <em>Losec MUPS</em> enteric coating).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: THE SOLUTION (3-PILLAR ARCHITECTURE) -->
+    <section class="slide flex-col justify-center max-w-6xl w-full space-y-6" data-notes="Explain our 3-pillar architecture: 1) Deterministic Dosing & Guardrail Engine, 2) Belgian UHMEP v1.4 FHIR R4 + SAM/Magistral/Trial Hub, and 3) Caregiver Companion with AI Traffic-Light Screener & Pharmacist Moderation.">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-widest text-teal-400">The PediDose Solution</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-1">
+          Three Integrated Pillars Built on Belgian eHealth Standards
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Pillar 1 -->
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-teal-500/40 rounded-2xl p-6 space-y-4">
+          <div class="w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-teal-300 font-black">
+            01
+          </div>
+          <h3 class="text-lg font-bold text-white">Deterministic Dosing &amp; Syringe Guardrails</h3>
+          <ul class="space-y-2 text-xs text-slate-300 list-disc list-inside leading-relaxed">
+            <li><strong>Mosteller BSA Engine:</strong> Live calculation from Height (cm) &amp; Weight (kg).</li>
+            <li><strong>Hard Ceiling Clamps:</strong> Auto-caps Vincristine at <code>2.00 mg</code>.</li>
+            <li><strong>Renal CrCl Adaptation:</strong> Adjusts Aciclovir intervals when <code>CrCl ≤ 50 mL/min</code>.</li>
+            <li><strong>Interactive SVG EnFit Syringe:</strong> Blocks 10x volume errors (<code>3.0 mL</code> vs <code>0.30 mL</code>).</li>
+          </ul>
+        </div>
+
+        <!-- Pillar 2 -->
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-indigo-500/40 rounded-2xl p-6 space-y-4">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-indigo-300 font-black">
+            02
+          </div>
+          <h3 class="text-lg font-bold text-white">Belgian SAM, !Magistral &amp; UHMEP FHIR Hub</h3>
+          <ul class="space-y-2 text-xs text-slate-300 list-disc list-inside leading-relaxed">
+            <li><strong>UZ Gent <code>!CODE</code> Recipes:</strong> Native support for <code>!PREDNI</code>, <code>!PURI</code>, and <code>!OMEPED</code> TMF.</li>
+            <li><strong>Trial Sourcing Lock:</strong> Blocks commercial Recip-e for <code>HEM-iSmart</code> study drugs.</li>
+            <li><strong>RIZIV §4460100 Bijlage A:</strong> Auto-fills Chapter IV forms + crushed 100 mg tablet PK guidance.</li>
+            <li><strong>UHMEP v1.4 Co-Sign:</strong> Assistant draft → Supervisor <code>$approve</code> → Pharmacy <code>Task</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Pillar 3 -->
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-rose-500/40 rounded-2xl p-6 space-y-4">
+          <div class="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-400/40 flex items-center justify-center text-rose-300 font-black">
+            03
+          </div>
+          <h3 class="text-lg font-bold text-white">Caregiver Companion &amp; Self-Learning KB</h3>
+          <ul class="space-y-2 text-xs text-slate-300 list-disc list-inside leading-relaxed">
+            <li><strong>Dose-Matched Home Sheets:</strong> UZ Gent oral syringe, capsule &amp; cytostatic safety guides.</li>
+            <li><strong>Steroid Tapering Calendar:</strong> 4-phase step-down table with exact mL syringe marks.</li>
+            <li><strong>AI Traffic-Light PK Screener:</strong> Flags grapefruit (RED) &amp; milk+MUPS (AMBER).</li>
+            <li><strong>Pharmacist Moderation Gate:</strong> Promotes verified tips to Gold Standard.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: INTERACTIVE GUARDRAIL SHOWCASE -->
+    <section class="slide flex-col justify-center max-w-6xl w-full space-y-6" data-notes="Click the buttons right inside this slide during the pitch to demonstrate how the 10x oral syringe blocker works visually!">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-teal-400">Live Interactive Slide Widget</span>
+          <h2 class="text-3xl font-extrabold text-white mt-1">
+            Catching a 10-Fold Pediatric Overdose Before It Leaves the Screen
+          </h2>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="slideSyringe(3.0)" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold cursor-pointer shadow-md">
+            1. Assistant Types 3.0 mL (10x Error!)
+          </button>
+          <button onclick="slideSyringe(0.3)" class="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold cursor-pointer shadow-md">
+            2. Snap to Deterministic 0.30 mL
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+            <div class="text-slate-400">Patient</div>
+            <div class="text-base font-bold text-white mt-0.5">Marc Willems (2y • 12 kg)</div>
+            <div class="text-teal-300 font-mono">Mosteller BSA: 0.54 m²</div>
+          </div>
+          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+            <div class="text-slate-400">Medication &amp; Concentration</div>
+            <div class="text-base font-bold text-white mt-0.5">!PREDNI-10 Solution</div>
+            <div class="text-indigo-300 font-mono">10 mg / 1 mL</div>
+          </div>
+          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+            <div class="text-slate-400">Deterministic Target Dose</div>
+            <div class="text-base font-bold text-teal-300 font-mono mt-0.5">3.0 mg = 0.30 mL</div>
+            <div class="text-slate-400">0.25 mg/kg/day Tapering</div>
+          </div>
+          <div id="slide-dose-card" class="bg-rose-950/80 p-3.5 rounded-xl border border-rose-500">
+            <div class="text-rose-200">Entered Syringe Draw</div>
+            <div id="slide-entered-text" class="text-base font-extrabold text-white font-mono mt-0.5">3.00 mL (30.0 mg!)</div>
+            <div id="slide-entered-sub" class="text-rose-300 font-bold">10.0x OVERDOSE BLOCKED</div>
+          </div>
+        </div>
+
+        <!-- Interactive SVG Oral Syringe -->
+        <div class="bg-slate-950 rounded-xl p-5 border border-slate-800">
+          <svg viewBox="0 0 650 110" class="w-full h-28">
+            <rect x="12" y="40" width="28" height="18" rx="3" fill="#9333ea" />
+            <text x="12" y="32" font-size="10" font-weight="bold" fill="#c084fc">EnFit</text>
+            <rect x="40" y="22" width="440" height="54" rx="4" fill="#0f172a" stroke="#475569" stroke-width="2" />
+            <rect id="s4-danger" x="41" y="23" width="438" height="52" fill="rgba(244, 63, 94, 0.35)" />
+            <rect x="41" y="23" width="44" height="52" fill="rgba(20, 184, 166, 0.7)" />
+            <line x1="85" y1="10" x2="85" y2="88" stroke="#2dd4bf" stroke-width="2.5" stroke-dasharray="4 2" />
+            <text x="50" y="12" font-size="11" font-weight="bold" fill="#2dd4bf">SAFE: 0.30 mL (3 mg)</text>
+            <rect id="s4-head" x="470" y="23" width="10" height="52" rx="2" fill="#dc2626" />
+            <rect id="s4-rod" x="480" y="39" width="120" height="20" fill="#f43f5e" />
+            <text x="40" y="96" font-size="11" fill="#94a3b8" font-family="monospace">0.0 mL</text>
+            <text x="78" y="96" font-size="11" fill="#2dd4bf" font-weight="bold" font-family="monospace">0.30 mL</text>
+            <text x="186" y="96" font-size="11" fill="#94a3b8" font-family="monospace">1.0 mL</text>
+            <text x="332" y="96" font-size="11" fill="#94a3b8" font-family="monospace">2.0 mL</text>
+            <text x="455" y="96" font-size="11" fill="#f87171" font-weight="bold" font-family="monospace">3.0 mL (30 mg!)</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: BELGIAN REIMBURSEMENT, PK & CLINICAL TRIAL INTELLIGENCE -->
+    <section class="slide flex-col justify-center max-w-6xl w-full space-y-6" data-notes="Highlight our deep domain research into UZ Gent PHO practices: Posaconazole 40 mg/mL suspension vs crushed 100 mg gastro-resistant tablet PK, and the HEM-iSmart Ruxolitinib trial lock.">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Deep Belgian Domain Intelligence</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-1">
+          Solving Real UZ Gent Hemato-Oncology Reimbursement &amp; PK Dilemmas
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Posaconazole Card -->
+        <div class="bg-slate-900 border border-amber-500/40 rounded-2xl p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold">
+              Case 2 • Posaconazole (Noxafil)
+            </span>
+            <span class="font-mono text-xs text-slate-400">RIZIV Chapter IV §4460100</span>
+          </div>
+          <h3 class="text-xl font-bold text-white">Why Crushed 100 mg Tablets Beat 40 mg/mL Oral Suspension</h3>
+          <div class="space-y-2.5 text-xs text-slate-300 leading-relaxed">
+            <div class="p-3 rounded-xl bg-rose-950/50 border border-rose-700/60">
+              <strong class="text-rose-300">The Suspension Trap (CNK 2349181):</strong> Not reimbursed under standard RIZIV Chapter IV for outpatient care — covered <em>only</em> via the <strong>Belgian Pediatric Oncology Convention</strong>. Also loses ~32% bioavailability when co-prescribed with Omeprazole!
+            </div>
+            <div class="p-3 rounded-xl bg-teal-950/50 border border-teal-700/60">
+              <strong class="text-teal-300">The PediDose Switch (CNK 3184926):</strong> Recommends switching to <strong>Posaconazole 100 mg Gastro-Resistant Tablets</strong> (reimbursed via RIZIV Chapter IV), auto-fills <strong>Bijlage A</strong>, and provides the UZ Gent Clinical Pharmacy PK rule: <em>crushed 100 mg tablets in apple purée reliably reach target trough levels (&gt;0.7 mg/L) in children</em>.
+            </div>
+          </div>
+        </div>
+
+        <!-- HEM-iSmart Card -->
+        <div class="bg-slate-900 border border-purple-500/40 rounded-2xl p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold">
+              Case 1 • Clinical Trial Lock
+            </span>
+            <span class="font-mono text-xs text-slate-400">Protocol: HEM-iSmart</span>
+          </div>
+          <h3 class="text-xl font-bold text-white">Preventing €3,200+ Commercial Prescribing of Trial IMPs</h3>
+          <div class="space-y-2.5 text-xs text-slate-300 leading-relaxed">
+            <div class="p-3 rounded-xl bg-purple-950/50 border border-purple-700/60">
+              <strong class="text-purple-300">The Problem:</strong> Jane Doe (7y, Relapsed B-ALL) is enrolled in <strong>HEM-iSmart</strong>, where <strong>Ruxolitinib (Jakavi)</strong> is provided free by the study sponsor. An assistant accidentally prescribing commercial Jakavi triggers a €3,200+ billing error and protocol violation.
+            </div>
+            <div class="p-3 rounded-xl bg-indigo-950/50 border border-indigo-700/60">
+              <strong class="text-indigo-300">Pharmacist Sourcing Lock:</strong> Clinical pharmacists toggle patient/drug locks in PediDose. Commercial Recip-e is hard-blocked, and the order is routed to <strong>UZ Gent Trial Pharmacy IMP Stock (0€ patient cost)</strong>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: UHMEP v1.4 FHIR R4 WORKFLOW -->
+    <section class="slide flex-col justify-center max-w-6xl w-full space-y-6" data-notes="Show how PediDose integrates with the FastAPI Belgian UHMEP v1.4 mock server: Assistant drafts, Supervisor co-signs with $approve (attaching be-ext-approval), and Pharmacist completes the Task.">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-widest text-indigo-400">Belgian UHMEP v1.4 / Recip-e FHIR R4 Backend</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-1">
+          Full Multi-Role FHIR Governance &amp; Live Telemetry
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-amber-500/40 rounded-2xl p-5 space-y-2">
+          <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">1. X-Role: assistant</span>
+          <h3 class="text-base font-bold text-white">Draft ServiceRequest</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            <code>POST /ServiceRequest</code> creates a <code>draft</code> order with eHealth pseudonym (<code>urn:be:fgov:ehealth:pseudo:v1</code>) and spawns a linked <code>Task (requested)</code>.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-rose-500/40 rounded-2xl p-5 space-y-2">
+          <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">2. Role Guardrail</span>
+          <h3 class="text-base font-bold text-white">HTTP 403 OperationOutcome</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            If an Assistant attempts <code>POST /ServiceRequest/{id}/$approve</code>, the FHIR server blocks it with <code>INSUFFICIENT_ROLE_PRIVILEGES</code>.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-indigo-500/40 rounded-2xl p-5 space-y-2">
+          <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">3. X-Role: supervisor</span>
+          <h3 class="text-base font-bold text-white">Co-Sign ($approve)</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Senior oncologist co-signs via <code>$approve</code>, transitioning status to <code>active</code> and attaching the Belgian <code>be-ext-approval</code> extension.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-emerald-500/40 rounded-2xl p-5 space-y-2">
+          <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">4. X-Role: pharmacist</span>
+          <h3 class="text-base font-bold text-white">Task Dispense &amp; $graph</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            <code>PATCH /Task/{id}</code> to <code>completed</code> automatically marks the parent <code>ServiceRequest</code> as <code>completed</code>. Full <code>$graph</code> bundle inspection included.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: CAREGIVER COMPANION & SELF-LEARNING KB -->
+    <section class="slide flex-col justify-center max-w-6xl w-full space-y-6" data-notes="Explain how PediDose turns informal nurse/parent taste-masking tricks into a safe, pharmacist-moderated knowledge base.">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-widest text-rose-400">Closing the Loop at Home</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-1">
+          Caregiver Companion &amp; AI-Screened Palatability Knowledge Base
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="bg-slate-900 border border-rose-500/50 rounded-2xl p-5 space-y-2">
+          <span class="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-xs font-bold">
+            RED • Auto-Blocked by AI PK Gate
+          </span>
+          <h3 class="text-base font-bold text-white">"Mix Noxafil in Pink Grapefruit Juice?"</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Caregiver submission is immediately flagged <strong class="text-rose-400">RED DANGER</strong>: grapefruit irreversibly inhibits intestinal CYP3A4, causing life-threatening neurotoxicity with Vincristine and toxic levels of Ruxolitinib/Tacrolimus.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-amber-500/50 rounded-2xl p-5 space-y-2">
+          <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold">
+            AMBER • Galenic pH Warning
+          </span>
+          <h3 class="text-base font-bold text-white">"Dissolve Losec MUPS in Warm Milk Bottle?"</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Flagged <strong class="text-amber-300">AMBER CAUTION</strong>: warm milk (pH ~6.7) dissolves the enteric coating of MUPS micro-pellets prematurely, causing stomach acid to destroy Omeprazole. Recommends <code>!OMEPED 2 mg/mL TMF</code> or acidic apple purée.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-emerald-500/50 rounded-2xl p-5 space-y-2">
+          <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold">
+            GREEN • Pharmacist Promoted Gold Standard
+          </span>
+          <h3 class="text-base font-bold text-white">"Water-Ice Popsicle + 1 tsp Cold Apple Purée"</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Verified safe by the AI screener and promoted by <strong>Apr. Vanacker</strong> to the Gold Standard Caregiver Companion — numbing taste buds before bitter steroids without altering absorption.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: 90-SECOND LIVE DEMO SCRIPT & SUMMARY -->
+    <section class="slide flex-col justify-center max-w-6xl w-full space-y-6" data-notes="Wrap up with the 90-second live demo sequence and invite questions from the jury.">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-widest text-teal-400">Ready for Live Walkthrough</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-1">
+          90-Second Live Demo Flow &amp; Impact Summary
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
+          <h3 class="text-lg font-bold text-teal-300">Live Demo Checklist (<code class="font-mono">localhost:5173</code>)</h3>
+          <ol class="space-y-2.5 text-xs text-slate-300 list-decimal list-inside leading-relaxed">
+            <li><strong>Case 3 (Prednisolone 10x Syringe Guard):</strong> Show <code>3.0 mL</code> hard stop → click <em>Snap to Safe 0.30 mL</em> → save Draft Prescription as <code>Dr. Peeters (Assistant)</code>.</li>
+            <li><strong>Case 2 (Posaconazole Convention vs. Chapter IV):</strong> Click 1-click switch to <em>100 mg Gastro-Resistant Tablet</em> → open auto-filled <strong>RIZIV Bijlage A</strong>.</li>
+            <li><strong>Tab 2 (UHMEP FHIR Workflow):</strong> Click <em>Test $approve as assistant</em> to trigger the live <strong>HTTP 403 OperationOutcome</strong> → switch header to <code>Prof. Janssens (Supervisor)</code> → click <strong>$approve</strong> → switch to <code>Apr. Vanacker (Pharmacist)</code> → complete <strong>Task</strong> &amp; inspect <code>$graph</code>.</li>
+            <li><strong>Tab 3 (Caregiver Companion):</strong> Show the printable steroid tapering calendar and moderate a community tip in the Pharmacist Queue.</li>
+          </ol>
+        </div>
+
+        <div class="bg-gradient-to-br from-indigo-950 to-slate-900 border border-indigo-500/40 rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div class="space-y-2">
+            <h3 class="text-2xl font-black text-white">Thank You!</h3>
+            <p class="text-sm text-indigo-200 leading-relaxed">
+              PediDose transforms pediatric prescribing from error-prone manual math into a deterministic, FHIR-native safety net from the oncology ward to the family kitchen table.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap gap-3 pt-2">
+            <a href="http://localhost:5173" target="_blank" class="px-5 py-2.5 rounded-xl bg-teal-400 hover:bg-teal-300 text-slate-950 font-extrabold text-xs shadow-lg transition-colors">
+              Open Live PediDose App (:5173) ↗
+            </a>
+            <a href="./index.html" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-slate-700 transition-colors">
+              View Technical Docs (docs/index.html)
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Speaker Notes Drawer (Toggled with N) -->
+  <aside id="speaker-notes-box" class="hidden bg-slate-900/95 border-t border-slate-700 px-8 py-3 text-xs text-amber-200 shrink-0">
+    <strong class="uppercase tracking-wider text-amber-400 mr-2">Speaker Notes:</strong>
+    <span id="speaker-notes-text"></span>
+  </aside>
+
+  <!-- Bottom Navigation Footer -->
+  <footer class="h-14 border-t border-slate-800/80 bg-slate-950 px-6 flex items-center justify-between text-xs text-slate-400 shrink-0">
+    <div>
+      Use <kbd class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">←</kbd> <kbd class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">→</kbd> or <kbd class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">Space</kbd> to navigate slides
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="prevSlide()" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold cursor-pointer">
+        ← Previous
+      </button>
+      <span id="slide-counter" class="font-mono font-bold text-teal-300">1 / 8</span>
+      <button onclick="nextSlide()" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold cursor-pointer">
+        Next Slide →
+      </button>
+    </div>
+  </footer>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const dotsContainer = document.getElementById('slide-dots');
+    const progressBar = document.getElementById('progress-bar');
+    const slideCounter = document.getElementById('slide-counter');
+    const notesBox = document.getElementById('speaker-notes-box');
+    const notesText = document.getElementById('speaker-notes-text');
+    let currentSlide = 0;
+
+    // Build slide dots
+    slides.forEach((_, idx) => {
+      const dot = document.createElement('button');
+      dot.onClick = () => goToSlide(idx);
+      dot.addEventListener('click', () => goToSlide(idx));
+      dot.className = 'w-2.5 h-2.5 rounded-full transition-all cursor-pointer';
+      dotsContainer.appendChild(dot);
+    });
+
+    function updateDeck() {
+      slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx === currentSlide);
+      });
+      Array.from(dotsContainer.children).forEach((d, idx) => {
+        d.className = idx === currentSlide
+          ? 'w-6 h-2.5 rounded-full bg-teal-400 transition-all cursor-pointer'
+          : 'w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-500 transition-all cursor-pointer';
+      });
+      progressBar.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+      slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+      notesText.textContent = slides[currentSlide].getAttribute('data-notes') || '';
+    }
+
+    function goToSlide(idx) {
+      currentSlide = Math.max(0, Math.min(slides.length - 1, idx));
+      updateDeck();
+    }
+
+    function nextSlide() { goToSlide(currentSlide + 1); }
+    function prevSlide() { goToSlide(currentSlide - 1); }
+
+    function toggleSpeakerNotes() {
+      notesBox.classList.toggle('hidden');
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function slideSyringe(vol) {
+      const danger = document.getElementById('s4-danger');
+      const head = document.getElementById('s4-head');
+      const rod = document.getElementById('s4-rod');
+      const card = document.getElementById('slide-dose-card');
+      const txt = document.getElementById('slide-entered-text');
+      const sub = document.getElementById('slide-entered-sub');
+
+      if (vol > 1.0) {
+        danger.setAttribute('width', '438');
+        head.setAttribute('x', '470');
+        head.setAttribute('fill', '#dc2626');
+        rod.setAttribute('x', '480');
+        rod.setAttribute('fill', '#f43f5e');
+        card.className = 'bg-rose-950/80 p-3.5 rounded-xl border border-rose-500';
+        txt.textContent = '3.00 mL (30.0 mg!)';
+        sub.className = 'text-rose-300 font-bold';
+        sub.textContent = '10.0x OVERDOSE BLOCKED';
+      } else {
+        danger.setAttribute('width', '0');
+        head.setAttribute('x', '85');
+        head.setAttribute('fill', '#14b8a6');
+        rod.setAttribute('x', '95');
+        rod.setAttribute('fill', '#9333ea');
+        card.className = 'bg-teal-950/80 p-3.5 rounded-xl border border-teal-500';
+        txt.textContent = '0.30 mL (3.0 mg)';
+        sub.className = 'text-teal-300 font-bold';
+        sub.textContent = 'SAFE DOSE VERIFIED ✓';
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key.toLowerCase() === 'n') {
+        toggleSpeakerNotes();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      }
+    });
+
+    updateDeck();
+  </script>
+</body>
+</html>

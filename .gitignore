@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-ssr
+*.local
+__pycache__/
+*.pyc
+.DS_Store
+mock-api-server/uhmep_mock.db
+uhmep_mock.db
